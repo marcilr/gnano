@@ -1,0 +1,15 @@
+README
+Created Mon May  4 15:21:05 AKDT 2015
+Copyright (C) 2015 by Raymond E. Marcil <rmarcil@gci.com>
+
+
+Filelist
+========
+gpg-agent.txt
+  Handling error:
+    can't connect to `/home/user/.gnupg/S.gpg-agent': No such file or directory
+
+  How to encrypt/decrypt a file or directory in Linux?
+  2 May 2014, by Nadir Soualem
+  http://www.math-linux.com/linux/tip-of-the-day/article/how-to-encrypt-decrypt-a-file-or-directory-in-linux
+
