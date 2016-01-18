@@ -5,6 +5,9 @@ Copyright (C) 2015 by Raymond E. Marcil <marcilr@gmail.com>
 
 Filelist
 ========
+00ERRORS/
+  Errors
+
 gnano
   Python wrapper for nano for editing gpg encrypted files.
   Very nice.
