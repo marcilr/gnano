@@ -1,0 +1,130 @@
+#!/usr/bin/python
+# Created Thu Jan  2 11:03:55 AKST 2014
+#
+# gnano - Python wrapper for nano for editing gpg encrypted files.
+#         Very nice.
+#
+# Links
+# =====
+# GnuPG - How to edit the file without decrypt and save to local disk first?
+# by Luke - Sep 5 '12 at 21:19
+# http://stackoverflow.com/questions/1510105/gnupg-how-to-edit-the-file-without-decrypt-and-save-to-local-disk-first
+# http://stackoverflow.com/posts/12289967/revisions
+#
+# GnuPG man page
+# gpg - encryption and signing tool
+# http://www.gnupg.org/documentation/manpage.html
+#
+# The GNU Privacy Handbook
+# A symmetric cipher is a cipher that uses the same key for both encryption
+# and decryption.  Two parties communicating using a symmetric cipher must
+# agree on the key beforehand.  Once they agree, the sender encrypts a message
+# using the key, sends it to the receiver, and the receiver decrypts the
+#  message using the key. 
+# http://www.gnupg.org/gph/en/manual.html
+#
+import os, sys, subprocess, getpass, stat, shutil
+
+editor = 'nano'
+dataFile = sys.argv[1]
+
+## make a backup of the encrypted file
+bakFile = dataFile+'-gpgedit_backup'
+shutil.copy(dataFile, bakFile)
+dstat = os.stat(dataFile)
+
+##  create temporary directory in tmpfs to work from
+tmpDir = '/dev/shm/gpgedit'
+n = 0
+while True:
+    try:
+        os.mkdir(tmpDir+str(n))
+        break
+    except OSError as err:
+        if err.errno != 17:  ## file already exists
+            raise
+    n += 1
+tmpDir += str(n)
+
+os.chmod(tmpDir, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+
+
+try:
+    ## Get password
+    passwd = getpass.getpass()
+
+    ## decrypt file
+    tmpFile = os.path.join(tmpDir, 'data')
+    cmd = "gpg -d --passphrase-fd 0 --output %s %s" % (tmpFile, dataFile)
+    proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
+    proc.stdin.write(passwd)
+    proc.stdin.close()
+    if proc.wait() != 0:
+        raise Exception("Error decrypting file.")
+
+    ## record stats of tmp file
+    stat = os.stat(tmpFile)
+
+    ## invoke editor
+    os.system('%s %s' % (editor, tmpFile))
+
+    ## see whether data has changed
+    stat2 = os.stat(tmpFile)
+    if stat.st_mtime == stat2.st_mtime and stat.st_size == stat2.st_size:
+        raise Exception("Data unchanged; not writing encrypted file.")
+
+    ##
+    ## re-encrypt, write back to original file
+    ##
+    ## Added --cipher-algo AES to match ~/bin/encrypt algorithm I use:
+    ##   gpg -c --cipher-algo AES <filename>
+    ##
+    ## This alleviated a warning during decryption:
+    ##   gpg: WARNING: message was not integrity protected
+    ##
+    ## gpg options:
+    ##   --yes                Assume "yes" on most questions.
+    ##
+    ##   -c, --symmetric      Encrypt with symmetric cipher only
+    ##                        This command asks for a passphrase.
+    ##                        NOTE: My ~/bin/encrypt command uses -c
+    ##
+    ##   --cipher-algo name   Use names as cipher algortihm.
+    ##                        In this case using AES (Advanced Encryption
+    ##                        Standard).  It is based on the Rijndael cipher
+    ##                        developed by two Belgian cryptographers, Joan
+    ##                        Daemen and Vincent Rijmen, who submitted a
+    ##                        proposal to NIST during the AES selection
+    ##                        process.
+    ##                        http://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+    ##
+    ##   --passphrase-fd      Read the passphrase from file descriptor n.  If
+    ##                        you use 0 for n, the passphrase will be read
+    ##                        from stdin.  This can only be used if only one
+    ##                        passphrase is supplied.  Don't use this option
+    ##                        if you can avoid it.
+    ##
+    ##   --output             Write to file specified
+    ##
+    ## Links
+    ## =====
+    ## GnuPG man page
+    ## gpg - encryption and signing tool
+    ## http://www.gnupg.org/documentation/manpage.html
+    ##
+    cmd = "gpg --yes --symmetric --cipher-algo AES --passphrase-fd 0 --output %s %s" % (dataFile, tmpFile)
+    proc = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
+    proc.stdin.write(passwd)
+    proc.stdin.close()
+    if proc.wait() != 0:
+        raise Exception("Error encrypting file.")
+except:
+    ## If there was an error AND the data file was modified, restore the backup.
+    dstat2 = os.stat(dataFile)
+    if dstat.st_mtime != dstat2.st_mtime or dstat.st_size != dstat2.st_size:
+        print "Error occurred, restored encrypted file from backup."
+        shutil.copy(bakFile, dataFile)
+    raise
+finally:
+    shutil.rmtree(tmpDir)
+    os.remove(bakFile)
