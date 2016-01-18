@@ -1,0 +1,21 @@
+gpg-agent.txt
+Created Mon May  4 15:22:55 AKDT 2015
+Copyright (C) 2015 by Raymond E. Marcil <marcilr@gmail.com>
+
+
+If you see this error below:
+  can't connect to `/home/user/.gnupg/S.gpg-agent': No such file or directory
+
+Then launch gpg agent daemon:
+  $ gpg-agent --daemon
+  GPG_AGENT_INFO=/tmp/gpg-Y1AjlZ/S.gpg-agent:2523:1; export GPG_AGENT_INFO;
+
+then you'll just have to create a symbolic link:
+  $ cp -fs /tmp/gpg-Y1AjlZ/S.gpg-agent ~/.gnupg/
+
+
+Links
+=====
+How to encrypt/decrypt a file or directory in Linux?
+2 May 2014, by Nadir Soualem
+http://www.math-linux.com/linux/tip-of-the-day/article/how-to-encrypt-decrypt-a-file-or-directory-in-linux
