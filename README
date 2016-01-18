@@ -1,0 +1,12 @@
+README
+Created Mon May  4 15:14:17 AKDT 2015
+Copyright (C) 2015 by Raymond E. Marcil <marcilr@gmail.com>
+
+
+Filelist
+========
+genpasswd
+  Script to create random 16-character alphanumeric passwords.
+  nixCraft
+  Linux and Unix tutorials for new and seasoned sysadmin. 
+  http://www.cyberciti.biz/faq/linux-random-password-generator/
