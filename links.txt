@@ -1,0 +1,37 @@
+links.txt
+Created Mon May  4 15:00:03 AKDT 2015
+Copyright (C) 2015 by Raymond E. Marcil <marcilr@gmail.com>
+
+
+gnano related links
+
+
+Links
+=====
+Available ciphers
+https://www.gnupg.org/documentation/manuals/gcrypt/Available-ciphers.html
+
+How to create strong passwords in Linux?
+Script to create passwords:
+  #!/bin/bash
+  l=$1
+  [ "$l" == "" ] && l=16
+  tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+Save as genpasswd (or whatever).
+http://unix.stackexchange.com/questions/462/how-to-create-strong-passwords-in-linux
+
+Popen and python
+http://stackoverflow.com/questions/1007855/popen-and-python
+
+Running shell command from python and capturing the output
+http://stackoverflow.com/questions/4760215/running-shell-command-from-python-and-capturing-the-output
+
+Script to create random 16-character alphanumeric passwords.
+nixCraft
+Linux and Unix tutorials for new and seasoned sysadmin.
+http://www.cyberciti.biz/faq/linux-random-password-generator/
+
+Subprocess management
+Interprocess Communication and Networking 
+The Python Standard Library
+https://docs.python.org/2/library/subprocess.html
