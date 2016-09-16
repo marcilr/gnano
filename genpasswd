@@ -1,0 +1,21 @@
+#!/bin/bash
+# genpasswd
+# Created Mon May  4 15:08:57 AKDT 2015
+# Copyright (C) 2015 by Raymond E. Marcil <rmarcil@gci.com>
+#
+# Script to create random 16-character alphanumeric passwords.
+#
+# Links
+# =====
+# HowTo: Linux Random Password Generator Command
+# by VIVEK GITE on FEBRUARY 18, 2011
+# Has source genpasswd() function.
+# nixCraft
+# Linux and Unix tutorials for new and seasoned sysadmin.
+# http://www.cyberciti.biz/faq/linux-random-password-generator/
+#
+
+l=$1
+[ "$l" == "" ] && l=16
+tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+
