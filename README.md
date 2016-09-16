@@ -12,6 +12,12 @@ Filelist
 00ERRORS/  
   Errors  
 
+genpasswd  
+  Script to create random 16-character alphanumeric passwords.  
+  nixCraft  
+  Linux and Unix tutorials for new and seasoned sysadmin.   
+  http://www.cyberciti.biz/faq/linux-random-password-generator/  
+
 gnano  
   Python wrapper for nano for editing gpg encrypted files.  
   Very nice.  
